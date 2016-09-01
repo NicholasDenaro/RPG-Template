@@ -12,9 +12,12 @@ import denaro.nick.core.view.GameView2D;
 import denaro.rpg.Player;
 import denaro.rpg.controller.KeyboardController;
 import denaro.rpg.settings.GridSettings;
+import denaro.rpg.text.DialogBox;
 
 public class Main
 {
+	public static Player player;
+	
 	public static void main(String[] args)
 	{
 		try
@@ -34,7 +37,7 @@ public class Main
 			
 			instance.controller(new KeyboardController());
 			
-			Player player = new Player(Sprite.sprite("Player"), grid.width, grid.height);
+			player = new Player(Sprite.sprite("Player"), grid.width, grid.height);
 			
 			instance.addControllerListener(player);
 			
@@ -60,5 +63,6 @@ public class Main
 	public static void sprites() throws IOException
 	{
 		new Sprite("Player", "Player.png", 16, 24, new Point(0, 8));
+		new Sprite("Characters", "3DS - The Legend of Zelda Ocarina of Time 3D - Font.png", 16, 16, new Point(0,0));
 	}
 }

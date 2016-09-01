@@ -27,10 +27,12 @@ public class KeyboardController extends Controller implements KeyListener
 	protected void createDefaultKeymap()
 	{
 		defaultKeymap = new HashMap<Integer,Integer>();
-		defaultKeymap.put(KeyEvent.VK_RIGHT,KeyList.KEY_RIGHT);
-		defaultKeymap.put(KeyEvent.VK_UP,KeyList.KEY_UP);
-		defaultKeymap.put(KeyEvent.VK_LEFT,KeyList.KEY_LEFT);
-		defaultKeymap.put(KeyEvent.VK_DOWN,KeyList.KEY_DOWN);
+		defaultKeymap.put(KeyEvent.VK_RIGHT,KeyList.RIGHT);
+		defaultKeymap.put(KeyEvent.VK_UP,KeyList.UP);
+		defaultKeymap.put(KeyEvent.VK_LEFT,KeyList.LEFT);
+		defaultKeymap.put(KeyEvent.VK_DOWN,KeyList.DOWN);
+		defaultKeymap.put(KeyEvent.VK_X,KeyList.A);
+		defaultKeymap.put(KeyEvent.VK_Z,KeyList.B);
 	}
 
 	@Override

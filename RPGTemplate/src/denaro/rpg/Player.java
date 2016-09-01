@@ -1,5 +1,6 @@
 package denaro.rpg;
 
+import denaro.nick.core.GameEngine;
 import denaro.nick.core.Sprite;
 import denaro.nick.core.controller.ControllerEvent;
 import denaro.nick.core.controller.ControllerListener;
@@ -7,6 +8,7 @@ import denaro.nick.core.entity.*;
 import denaro.rpg.controller.KeyList;
 import denaro.rpg.settings.GridSettings;
 import denaro.rpg.test.Main;
+import denaro.rpg.text.DialogBox;
 
 public class Player extends Entity implements ControllerListener
 {
@@ -67,24 +69,24 @@ public class Player extends Entity implements ControllerListener
 		
 		if(moveTimer == 0 && moveHoldTimer == 0)
 		{
-			if(keys[KeyList.KEY_RIGHT])
+			if(keys[KeyList.RIGHT])
 			{
-				direction = directionFromCode(KeyList.KEY_RIGHT);
+				direction = directionFromCode(KeyList.RIGHT);
 				moveTimer = GridSettings.instance().width;
 			}
-			else if(keys[KeyList.KEY_UP])
+			else if(keys[KeyList.UP])
 			{
-				direction = directionFromCode(KeyList.KEY_UP);
+				direction = directionFromCode(KeyList.UP);
 				moveTimer = GridSettings.instance().height;
 			}
-			else if(keys[KeyList.KEY_LEFT])
+			else if(keys[KeyList.LEFT])
 			{
-				direction = directionFromCode(KeyList.KEY_LEFT);
+				direction = directionFromCode(KeyList.LEFT);
 				moveTimer = GridSettings.instance().width;
 			}
-			else if(keys[KeyList.KEY_DOWN])
+			else if(keys[KeyList.DOWN])
 			{
-				direction = directionFromCode(KeyList.KEY_DOWN);
+				direction = directionFromCode(KeyList.DOWN);
 				moveTimer = GridSettings.instance().height;
 			}
 		}
@@ -104,13 +106,13 @@ public class Player extends Entity implements ControllerListener
 	{
 		switch(code)
 		{
-			case KeyList.KEY_RIGHT:
+			case KeyList.RIGHT:
 				return Direction.EAST;
-			case KeyList.KEY_UP:
+			case KeyList.UP:
 				return Direction.NORTH;
-			case KeyList.KEY_LEFT:
+			case KeyList.LEFT:
 				return Direction.WEST;
-			case KeyList.KEY_DOWN:
+			case KeyList.DOWN:
 				return Direction.SOUTH;
 			default:
 				return -1;
@@ -123,6 +125,12 @@ public class Player extends Entity implements ControllerListener
 		if(event.action() == ControllerEvent.PRESSED)
 		{
 			keys[event.code()] = true;
+			if(event.code() == KeyList.A)
+			{
+				DialogBox box = new DialogBox("Hello World!\nHow are you doing this fine and glorious day?", 32, 240, 64, Sprite.sprite("Characters"));
+				GameEngine.instance().addEntity(box, GameEngine.instance().location());
+				GameEngine.instance().requestFocus(0, box);
+			}
 		}
 		else if(event.action() == ControllerEvent.RELEASED)
 		{
