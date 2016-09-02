@@ -41,7 +41,7 @@ public class DialogBox extends Entity implements ControllerListener
 		
 		topLine = 0;
 		currentLine = 0;
-		cursor = 0;
+		cursor = -1;
 		delay = 8;
 		running = false;
 		finished = false;
@@ -120,24 +120,24 @@ public class DialogBox extends Entity implements ControllerListener
 		
 		if(currentLine < text.length)
 		{
-			if(cursor < text[currentLine].length())
+			if(cursor == -1 || (cursor < text[currentLine].length() && text[currentLine].charAt(cursor) != '`'))
 			{
 				delay -= speedup ? 3 : 1;
 				if(delay <= 0)
 				{
+					cursor++;
+					delay = 8;
+					
 					if(cursor < text[currentLine].length())
 					{
 						Graphics2D g = image.createGraphics();
 						g.drawImage(characters.subimage(text[currentLine].charAt(cursor) - 'A' + 33), cursor * characters.width(), (currentLine - topLine) * characters.height(), null);
 					}
-					
-					cursor++;
-					delay = 8;
 				}
 			}
-			else
+			else if(cursor == text[currentLine].length())
 			{
-				cursor = 0;
+				cursor = -1;
 				currentLine++;
 				if(currentLine < text.length && currentLine - topLine >= image.getHeight() / characters.height())
 				{
@@ -158,6 +158,14 @@ public class DialogBox extends Entity implements ControllerListener
 		g.setColor(Color.black);
 		g.fillRect(0,image.getHeight() - characters.height(), image.getWidth(), characters.height());
 		topLine++;
+	}
+	
+	private void shiftToTop()
+	{
+		while(topLine < currentLine)
+		{
+			shiftUp();
+		}
 	}
 	
 	public Image image()
@@ -183,11 +191,22 @@ public class DialogBox extends Entity implements ControllerListener
 		if(finished && event.code() == KeyList.A)
 		{
 			GameEngine.instance().removeEntity(this,GameEngine.instance().location());
-			GameEngine.instance().requestFocus(0,Main.player);
+			GameEngine.instance().requestFocus(0, Main.player);
 		}
 		else if(event.code() == KeyList.B)
 		{
-			speedup = event.action() == ControllerEvent.PRESSED;
+			speedup = event.action() == ControllerEvent.HELD;
+		}
+		
+		if(event.action() == ControllerEvent.PRESSED && (event.code() == KeyList.A || event.code() == KeyList.B))
+		{
+			if(currentLine < text.length && cursor < text[currentLine].length() && text[currentLine].charAt(cursor) == '`')
+			{
+				delay = 8;
+				cursor = -1;
+				currentLine++;
+				shiftToTop();
+			}
 		}
 	}
 }

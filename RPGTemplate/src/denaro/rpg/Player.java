@@ -127,7 +127,7 @@ public class Player extends Entity implements ControllerListener
 			keys[event.code()] = true;
 			if(event.code() == KeyList.A)
 			{
-				DialogBox box = new DialogBox("Hello World!\nHow are you doing this fine and glorious day?", 32, 240, 64, Sprite.sprite("Characters"));
+				DialogBox box = new DialogBox("Hello World!`\nHow are you doing this fine and glorious day?`", 32, 240, 64, Sprite.sprite("Characters"));
 				GameEngine.instance().addEntity(box, GameEngine.instance().location());
 				GameEngine.instance().requestFocus(0, box);
 			}

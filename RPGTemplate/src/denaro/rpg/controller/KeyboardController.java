@@ -12,6 +12,7 @@ import denaro.rpg.test.Main;
 public class KeyboardController extends Controller implements KeyListener
 {
 	private static final long serialVersionUID=1L;
+	private static boolean keys[];
 
 	@Override
 	public boolean init(GameEngine engine)
@@ -20,6 +21,7 @@ public class KeyboardController extends Controller implements KeyListener
 		engine.view().addKeyListener(this);
 		engine.view().setFocusable(true);
 		engine.view().requestFocus();
+		keys = new boolean[defaultKeymap.size()];
 		return true;
 	}
 
@@ -38,13 +40,17 @@ public class KeyboardController extends Controller implements KeyListener
 	@Override
 	public void keyPressed(KeyEvent ke)
 	{
-		actionPerformed(new ControllerEvent(this,ControllerEvent.PRESSED,defaultKeymap.get(ke.getKeyCode())));
+		int code = defaultKeymap.get(ke.getKeyCode());
+		actionPerformed(new ControllerEvent(this,keys[code] ? ControllerEvent.HELD : ControllerEvent.PRESSED,code));
+		keys[code] = true;
 	}
 
 	@Override
 	public void keyReleased(KeyEvent ke)
 	{
-		actionPerformed(new ControllerEvent(this,ControllerEvent.RELEASED,defaultKeymap.get(ke.getKeyCode())));
+		int code = defaultKeymap.get(ke.getKeyCode());
+		actionPerformed(new ControllerEvent(this,ControllerEvent.RELEASED,code));
+		keys[code] = false;
 	}
 
 	@Override
