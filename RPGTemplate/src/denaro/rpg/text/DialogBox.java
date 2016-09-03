@@ -143,11 +143,12 @@ public class DialogBox extends Entity implements ControllerListener
 				{
 					shiftUp();
 				}
-				else if(currentLine == text.length)
-				{
-					finished = true;
-				}
 			}
+		}
+		
+		if(currentLine == text.length)
+		{
+			finished = true;
 		}
 	}
 	
