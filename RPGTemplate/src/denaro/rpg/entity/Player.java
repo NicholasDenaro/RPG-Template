@@ -1,20 +1,22 @@
-package denaro.rpg;
+package denaro.rpg.entity;
 
 import denaro.nick.core.GameEngine;
+import denaro.nick.core.Point;
 import denaro.nick.core.Sprite;
 import denaro.nick.core.controller.ControllerEvent;
 import denaro.nick.core.controller.ControllerListener;
 import denaro.nick.core.entity.*;
+import denaro.rpg.Direction;
+import denaro.rpg.RPGEngine;
 import denaro.rpg.controller.KeyList;
 import denaro.rpg.settings.GridSettings;
-import denaro.rpg.test.Main;
 import denaro.rpg.text.DialogBox;
 
-public class Player extends Entity implements ControllerListener
+public class Player extends Entity implements ControllerListener, Solid, Moving
 {
 	private static final int MAX_MOVE_HOLD_TIMER = 5;
 	private int moveTimer;
-	private int direction;
+	private Direction direction;
 	private int moveHoldTimer;
 	
 	private boolean[] keys;
@@ -36,14 +38,7 @@ public class Player extends Entity implements ControllerListener
 		if(moveTimer > 0)
 		{
 			moveTimer--;
-			try
-			{
-				this.moveDelta(Direction.getVector(direction));
-			}
-			catch(InvalidDirectionException e)
-			{
-				e.printStackTrace();
-			}
+			this.moveDelta(direction.getVector());
 		}
 	}
 	
@@ -69,27 +64,45 @@ public class Player extends Entity implements ControllerListener
 		
 		if(moveTimer == 0 && moveHoldTimer == 0)
 		{
-			if(keys[KeyList.RIGHT])
-			{
-				direction = directionFromCode(KeyList.RIGHT);
-				moveTimer = GridSettings.instance().width;
-			}
-			else if(keys[KeyList.UP])
-			{
-				direction = directionFromCode(KeyList.UP);
-				moveTimer = GridSettings.instance().height;
-			}
-			else if(keys[KeyList.LEFT])
-			{
-				direction = directionFromCode(KeyList.LEFT);
-				moveTimer = GridSettings.instance().width;
-			}
-			else if(keys[KeyList.DOWN])
-			{
-				direction = directionFromCode(KeyList.DOWN);
-				moveTimer = GridSettings.instance().height;
+			direction = updateDirection();
+			if(isKeyPressed())
+			{				
+				if(RPGEngine.instance().zone().isTileOpen(gridPoint(), direction))
+				{
+					moveTimer = direction == Direction.NORTH || direction == Direction.SOUTH ? GridSettings.instance().height : GridSettings.instance().width;
+					RPGEngine.instance().zone().updateTile(this, direction);
+				}
 			}
 		}
+	}
+	
+	private boolean isKeyPressed()
+	{
+		return keys[KeyList.RIGHT] || keys[KeyList.UP] || keys[KeyList.LEFT] || keys[KeyList.DOWN];
+	}
+	
+	private Direction updateDirection()
+	{
+		Direction dir = direction;
+		
+		if(keys[KeyList.RIGHT])
+		{
+			dir = directionFromCode(KeyList.RIGHT);
+		}
+		else if(keys[KeyList.UP])
+		{
+			dir = directionFromCode(KeyList.UP);
+		}
+		else if(keys[KeyList.LEFT])
+		{
+			dir = directionFromCode(KeyList.LEFT);
+		}
+		else if(keys[KeyList.DOWN])
+		{
+			dir = directionFromCode(KeyList.DOWN);
+		}
+		
+		return dir;
 	}
 
 	@Override
@@ -102,7 +115,7 @@ public class Player extends Entity implements ControllerListener
 	{
 	}
 
-	private int directionFromCode(int code)
+	private Direction directionFromCode(int code)
 	{
 		switch(code)
 		{
@@ -115,7 +128,7 @@ public class Player extends Entity implements ControllerListener
 			case KeyList.DOWN:
 				return Direction.SOUTH;
 			default:
-				return -1;
+				return null;
 		}
 	}
 	
@@ -138,5 +151,8 @@ public class Player extends Entity implements ControllerListener
 		}
 	}
 	
-	
+	public Point gridPoint()
+	{
+		return new Point(this.point().x / GridSettings.instance().width, this.point().y / GridSettings.instance().height);
+	}
 }

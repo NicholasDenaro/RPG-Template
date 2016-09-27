@@ -9,9 +9,13 @@ import denaro.nick.core.Location;
 import denaro.nick.core.Point;
 import denaro.nick.core.Sprite;
 import denaro.nick.core.view.GameView2D;
-import denaro.rpg.Player;
+import denaro.rpg.RPGEngine;
+import denaro.rpg.Zone;
 import denaro.rpg.controller.KeyboardController;
+import denaro.rpg.entity.NPC;
+import denaro.rpg.entity.Player;
 import denaro.rpg.settings.GridSettings;
+import denaro.rpg.settings.Settings;
 import denaro.rpg.text.DialogBox;
 
 public class Main
@@ -22,31 +26,37 @@ public class Main
 	{
 		try
 		{
-			GameEngine instance = GameEngine.instance(new FixedTickType(60));
+			Settings settings = new Settings();
+			settings.grid = GridSettings.createInstance(16, 16);
+			
+			RPGEngine engine = RPGEngine.instance(new FixedTickType(60), settings);
 			
 			GameView2D view = new GameView2D(240, 160, 2, 2);
 			
-			instance.view(view);
+			engine.engine().view(view);
 			
-			Location loc = new Location();
-			instance.location(loc);
-			
-			GridSettings grid = GridSettings.createInstance(16, 16);
+			Zone zone = new Zone(10,10);
+			engine.zone(zone);
 			
 			sprites();
 			
-			instance.controller(new KeyboardController());
+			engine.engine().controller(new KeyboardController());
 			
-			player = new Player(Sprite.sprite("Player"), grid.width, grid.height);
+			player = new Player(Sprite.sprite("Player"), settings.grid.width, settings.grid.height);
 			
-			instance.addControllerListener(player);
+			engine.engine().addControllerListener(player);
 			
-			instance.addEntity(player,loc);
+			zone.addEntityToGrid(player);
 			
-			instance.requestFocus(0, player);
 			
-			new GameFrame("RPG-Template", instance);
-			instance.start();
+			NPC npc = new NPC(Sprite.sprite("NPC"), settings.grid.width * 2, settings.grid.height * 2);
+			
+			zone.addEntityToGrid(npc);
+			
+			engine.engine().requestFocus(0, player);
+			
+			new GameFrame("RPG-Template", engine.engine());
+			engine.start();
 		}
 		catch(GameEngineException e)
 		{
@@ -63,6 +73,7 @@ public class Main
 	public static void sprites() throws IOException
 	{
 		new Sprite("Player", "Player.png", 16, 24, new Point(0, 8));
+		new Sprite("NPC", "Player.png", 16, 24, new Point(0, 8));
 		new Sprite("Characters", "3DS - The Legend of Zelda Ocarina of Time 3D - Font.png", 16, 16, new Point(0,0));
 	}
 }

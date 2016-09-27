@@ -4,35 +4,54 @@ import denaro.nick.core.Vector;
 
 public class Direction
 {
-	public static final int NORTH = 0;
-	public static final int EAST = 1;
-	public static final int SOUTH = 2;
-	public static final int WEST = 3;
+	private static final int EAST_ORD = 0;
+	private static final int NORTH_ORD = 1;
+	private static final int WEST_ORD = 2;
+	private static final int SOUTH_ORD = 3;
 	
-	public static Vector getVector(int direction) throws InvalidDirectionException
+	public static final Direction EAST = new Direction(EAST_ORD);
+	public static final Direction NORTH = new Direction(NORTH_ORD);
+	public static final Direction WEST = new Direction(WEST_ORD);
+	public static final Direction SOUTH = new Direction(SOUTH_ORD);
+	
+	public Vector getVector()
 	{
-		switch(direction)
+		switch(ordinal)
 		{
-			case NORTH:
-				return new Vector(0,-1);
-			case EAST:
+			case EAST_ORD:
 				return new Vector(1,0);
-			case SOUTH:
-				return new Vector(0,1);
-			case WEST:
+			case NORTH_ORD:
+				return new Vector(0,-1);
+			case WEST_ORD:
 				return new Vector(-1,0);
-			default:
-				throw new InvalidDirectionException(direction);
+			case SOUTH_ORD:
+				return new Vector(0,1);
 		}
+		
+		return null;
 	}
-}
-
-class InvalidDirectionException extends Exception
-{
-	private static final long serialVersionUID=1L;
-
-	public InvalidDirectionException(int direction)
+	
+	public String getName()
 	{
-		super(String.format("The direction '{0}' is invalid.",direction));
+		switch(ordinal)
+		{
+			case EAST_ORD:
+				return "East";
+			case NORTH_ORD:
+				return "North";
+			case WEST_ORD:
+				return "West";
+			case SOUTH_ORD:
+				return "South";
+		}
+		
+		return "Null";
+	}
+	
+	private final int ordinal;
+	
+	private Direction(int ord)
+	{
+		this.ordinal = ord;
 	}
 }
